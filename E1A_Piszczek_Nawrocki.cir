@@ -1,0 +1,82 @@
+iuss_projekt
+*** Deklaracja biblioteki ***
+.lib tsmc180_t77a_spice.lib
+
+*** M<nazwa> <dren> <bramka> <źródło> <podłoże> <model> ***
+
+*** bramka ***
+M1 A in1 Vdd Vdd PFET W=0.6u L=0.2u
+M2 A in1 Vss Vss NFET W=0.4u L=0.2u
+M3 B in2 Vdd Vdd PFET W=0.6u L=0.2u
+M4 B in2 Vss Vss NFET W=0.4u L=0.2u
+M5 D A Vss Vss NFET W=0.4u L=0.2u
+M6 E A Vdd Vdd PFET W=1.2u L=0.2u
+M7 D B E Vdd PFET W=1.2u L=0.2u
+M8 D B Vss Vss NFET W=0.4u L=0.2u
+M9 logic_out D Vdd Vdd PFET W=0.6u L=0.2u
+M10 logic_out D Vss Vss NFET W=0.4u L=0.2u
+
+*** Bufor cyfrowy  ***
+M11 buf1 logic_out Vdd Vdd PFET W=1.8u L=0.2u
+M12 buf1 logic_out Vss Vss NFET W=1.2u L=0.2u
+
+M13 buf2 buf1 Vdd Vdd PFET W=5.4u L=0.2u
+M14 buf2 buf1 Vss Vss NFET W=3.6u L=0.2u
+
+M15 buf3 buf2 Vdd Vdd PFET W=16.2u L=0.2u
+M16 buf3 buf2 Vss Vss NFET W=10.8u L=0.2u
+
+M17 buf4 buf3 Vdd Vdd PFET W=48.6u L=0.2u
+M18 buf4 buf3 Vss Vss NFET W=32.4u L=0.2u
+
+M19 buf5 buf4 Vdd Vdd PFET W=145.8u L=0.2u
+M20 buf5 buf4 Vss Vss NFET W=97.2u L=0.2u
+
+M21 out buf5 Vdd Vdd PFET W=437.4u L=0.2u
+M22 out buf5 Vss Vss NFET W=291.6u L=0.2u
+
+
+
+*** Zrodla zasilania ***
+Vdd Vdd 0 DC 1.8V
+Vss Vss 0 DC 0
+
+*** Sygnaly wejsciowe ***
+Vin1 in1 0 DC 1.8V
+Vin2 in2 0 DC 1.8V
+;.op
+
+*** czas narastania sygnalu ***
+;Vsqr in1 0 PULSE(0 1.8V 1n 10p 10p 10n 20n)
+;Vin2 in2 0 DC 1.8V
+;.tran 30n
+
+*** napiecie przelaczania ***
+.dc Vin2 0 1.8 10m
+
+*** test wydajnosci pradowej ***
+;Rload out Vss{RTEST}
+;.param RTEST = {Vdd/15m}
+;.param Vdd=1.8
+
+;.temp -30 27 125
+;.dc Vdd 1.62 1.98 0.18
+
+*** test maksymalnej czestotliwosci ***
+;Vin1 in1 0 DC 1.62
+;.param vdd=1.62 fsqr=458e+6 tsqr={1/fsqr}
+;Vsqr sqr vss DC 0 PULSE(0 {vdd} {tsqr/2} 0.1ns 0.1ns {tsqr/2} {tsqr})
+;R1 sqr in2 50
+;CL out vss 25p
+;.TRAN 2ns 20ns
+
+
+
+
+
+.end
+
+
+
+
+
